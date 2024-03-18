@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Advanced Dictionary</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <style>
+      /* Improved styling */
+      body {
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
+      .container {
+        max-width: 800px;
+        margin: 50px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+      #output {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        overflow-y: auto;
+        font-size: 16px;
+      }
+      .word-info {
+        margin-bottom: 20px;
+      }
+      .word-type {
+        margin-bottom: 10px;
+      }
+      .definition {
+        margin-bottom: 10px;
+      }
+      .synonyms {
+        margin-top: 10px;
+        cursor: pointer;
+        color: blue;
+        text-decoration: underline;
+      }
+      .dictionary-icon {
+        color: #666;
+        margin-right: 5px;
+      }
+      .suggestion {
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 5px;
+        background-color: #f0f0f0;
+        margin-right: 5px;
+        display: inline-block;
+      }
+      .suggestion:hover {
+        background-color: #e0e0e0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Advanced Dictionary</h1>
+      <input type="text" id="searchInput" placeholder="Search..." />
+      <div id="suggestions"></div>
+      <div id="output"></div>
+    </div>
+
+    <script>
+      const dictionary = {
+        apple: {
+          pronunciation: "ˈapəl",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "A fruit with a tough skin and a juicy interior.",
+              example: "He took a bite out of the apple.",
+            },
+            {
+              meaning: "A tree that bears such fruits.",
+              example: "They planted an apple tree in their garden.",
+            },
+          ],
+          synonyms: ["fruit", "pomme"],
+        },
+        banana: {
+          pronunciation: "bəˈnænə",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A long curved fruit that grows in clusters and has soft pulpy flesh and yellow skin when ripe.",
+              example: "She peeled a banana for breakfast.",
+            },
+          ],
+          synonyms: ["fruit"],
+        },
+        run: {
+          pronunciation: "rʌn",
+          type: "verb",
+          meanings: [
+            {
+              meaning:
+                "Move at a speed faster than a walk, never having both or all the feet on the ground at the same time.",
+              example: "He ran to catch the bus.",
+            },
+            {
+              meaning: "Operate or cause to operate.",
+              example: "She ran her fingers through her hair.",
+            },
+          ],
+          synonyms: ["sprint", "jog"],
+        },
+        // Add more words and definitions below
+        dog: {
+          pronunciation: "dɔɡ",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A domesticated carnivorous mammal that typically has a long snout, an acute sense of smell, non-retractile claws, and a barking, howling, or whining voice.",
+              example: "The dog chased the ball.",
+            },
+          ],
+          synonyms: ["canine", "pooch"],
+        },
+        cat: {
+          pronunciation: "kæt",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A small domesticated carnivorous mammal with soft fur, a short snout, and retractable claws.",
+              example: "The cat sat on the windowsill.",
+            },
+          ],
+          synonyms: ["feline", "kitty"],
+        },
+        computer: {
+          pronunciation: "kəmˈpjuːtər",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "An electronic device for storing and processing data.",
+              example: "She uses her computer to work from home.",
+            },
+          ],
+          synonyms: ["PC", "machine"],
+        },
+        book: {
+          pronunciation: "bʊk",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A written or printed work consisting of pages glued or sewn together along one side and bound in covers.",
+              example: "She loves reading books in her free time.",
+            },
+          ],
+          synonyms: ["volume", "publication"],
+        },
+        car: {
+          pronunciation: "kɑːr",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A road vehicle, typically with four wheels, powered by an internal combustion engine and able to carry a small number of people.",
+              example: "He drove his car to work every day.",
+            },
+          ],
+          synonyms: ["automobile", "vehicle"],
+        },
+        house: {
+          pronunciation: "haʊs",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A building for human habitation, especially one that is lived in by a family or small group of people.",
+              example: "They bought a new house in the suburbs.",
+            },
+          ],
+          synonyms: ["home", "dwelling"],
+        },
+        friend: {
+          pronunciation: "frɛnd",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A person with whom one has a bond of mutual affection, typically one exclusive of sexual or family relations.",
+              example: "She's been my best friend since childhood.",
+            },
+          ],
+          synonyms: ["companion", "mate"],
+        },
+        // Add more words and definitions below
+        bird: {
+          pronunciation: "bɜːrd",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A warm-blooded egg-laying vertebrate distinguished by the possession of feathers, wings, and a beak.",
+              example: "The bird sang a beautiful melody.",
+            },
+          ],
+          synonyms: ["avian", "fowl"],
+        },
+        tree: {
+          pronunciation: "triː",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A woody perennial plant, typically having a single stem or trunk growing to a considerable height and bearing lateral branches at some distance from the ground.",
+              example: "The tree provided shade on hot summer days.",
+            },
+          ],
+          synonyms: ["plant", "shrub"],
+        },
+        flower: {
+          pronunciation: "ˈflaʊər",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "The seed-bearing part of a plant, consisting of reproductive organs (stamens and carpels) that are typically surrounded by a brightly colored corolla (petals) and a green calyx (sepals).",
+              example: "She picked a flower from the garden.",
+            },
+          ],
+          synonyms: ["blossom", "bloom"],
+        },
+        table: {
+          pronunciation: "ˈteɪbl",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A piece of furniture with a flat top and one or more legs, providing a level surface for eating, writing, or working.",
+              example: "They sat around the table for dinner.",
+            },
+          ],
+          synonyms: ["desk", "board"],
+        },
+        mountain: {
+          pronunciation: "ˈmaʊntɪn",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A large natural elevation of the earth's surface rising abruptly from the surrounding level; a large steep hill.",
+              example: "They climbed the mountain for an adventure.",
+            },
+          ],
+          synonyms: ["peak", "hill"],
+        },
+        river: {
+          pronunciation: "ˈrɪvər",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A large natural stream of water flowing in a channel to the sea, a lake, or another such stream.",
+              example: "The river flowed gently through the valley.",
+            },
+          ],
+          synonyms: ["stream", "brook"],
+        },
+        ocean: {
+          pronunciation: "ˈoʊʃən",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A very large expanse of sea, in particular, each of the main areas into which the sea is divided geographically.",
+              example: "They sailed across the ocean.",
+            },
+          ],
+          synonyms: ["sea", "deep"],
+        },
+        sun: {
+          pronunciation: "sʌn",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "The star around which the earth orbits.",
+              example: "The sun provides warmth and light to the earth.",
+            },
+          ],
+          synonyms: ["star", "sol"],
+        },
+        moon: {
+          pronunciation: "muːn",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "The natural satellite of the earth, visible (chiefly at night) by reflected light from the sun.",
+              example: "They admired the full moon in the sky.",
+            },
+          ],
+          synonyms: ["satellite", "luna"],
+        },
+        sky: {
+          pronunciation: "skaɪ",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "The region of the atmosphere and outer space seen from the earth.",
+              example: "The sky was clear and blue.",
+            },
+          ],
+          synonyms: ["heavens", "firmament"],
+        },
+        cloud: {
+          pronunciation: "klaʊd",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A visible mass of condensed water vapor floating in the atmosphere, typically high above the ground.",
+              example: "The cloud obscured the sun for a moment.",
+            },
+          ],
+          synonyms: ["cumulus", "fog"],
+        },
+        rain: {
+          pronunciation: "reɪn",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "Moisture condensed from the atmosphere that falls visibly in separate drops.",
+              example: "We got caught in the rain without an umbrella.",
+            },
+          ],
+          synonyms: ["precipitation", "shower"],
+        },
+        fire: {
+          pronunciation: "faɪər",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "Combustion or burning, in which substances combine chemically with oxygen from the air and typically give out bright light, heat, and smoke.",
+              example: "They built a fire to keep warm.",
+            },
+          ],
+          synonyms: ["flame", "blaze"],
+        },
+        ice: {
+          pronunciation: "aɪs",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "Water frozen solid.",
+              example: "She put some ice cubes in her drink.",
+            },
+          ],
+          synonyms: ["frost", "frozen water"],
+        },
+        snow: {
+          pronunciation: "snoʊ",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "Atmospheric water vapor frozen into ice crystals and falling in light white flakes or lying on the ground as a white layer.",
+              example: "The children played in the snow.",
+            },
+          ],
+          synonyms: ["powder", "frost"],
+        },
+        school: {
+          pronunciation: "skuːl",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "An institution for educating children.",
+              example: "He goes to school five days a week.",
+            },
+          ],
+          synonyms: ["educational institution", "academy"],
+        },
+        teacher: {
+          pronunciation: "ˈtiːtʃər",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "A person who teaches, especially in a school.",
+              example: "She's a history teacher at the local high school.",
+            },
+          ],
+          synonyms: ["educator", "instructor"],
+        },
+        student: {
+          pronunciation: "ˈstjuːdənt",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A person who is studying at a university or other place of higher education.",
+              example: "He's a student of economics.",
+            },
+          ],
+          synonyms: ["pupil", "learner"],
+        },
+        university: {
+          pronunciation: "ˌjuːnɪˈvɜːsɪti",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An educational institution designed for instruction, examination, or both, of students in many branches of advanced learning, conferring degrees in various faculties, and often embodying colleges and similar institutions.",
+              example: "She attends the university to study physics.",
+            },
+          ],
+          synonyms: ["college", "school"],
+        },
+        doctor: {
+          pronunciation: "ˈdɒktər",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A person who is qualified to treat people who are ill or injured.",
+              example: "She went to see the doctor about her cough.",
+            },
+          ],
+          synonyms: ["physician", "medic"],
+        },
+        hospital: {
+          pronunciation: "ˈhɒspɪtl",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An institution providing medical and surgical treatment and nursing care for sick or injured people.",
+              example: "He was taken to the hospital after the accident.",
+            },
+          ],
+          synonyms: ["clinic", "infirmary"],
+        },
+        medicine: {
+          pronunciation: "ˈmɛdɪsɪn",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "The science or practice of the diagnosis, treatment, and prevention of disease (in technical use often taken to exclude surgery).",
+              example: "She's studying medicine at university.",
+            },
+          ],
+          synonyms: ["medication", "remedy"],
+        },
+        health: {
+          pronunciation: "hɛlθ",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "The state of being free from illness or injury.",
+              example: "Regular exercise is good for your health.",
+            },
+          ],
+          synonyms: ["well-being", "fitness"],
+        },
+        music: {
+          pronunciation: "ˈmjuːzɪk",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "Vocal or instrumental sounds (or both) combined in such a way as to produce beauty of form, harmony, and expression of emotion.",
+              example: "She enjoys listening to classical music.",
+            },
+          ],
+          synonyms: ["melody", "tune"],
+        },
+        art: {
+          pronunciation: "ɑːt",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "The expression or application of human creative skill and imagination, typically in a visual form such as painting or sculpture, producing works to be appreciated primarily for their beauty or emotional power.",
+              example: "She's studying art at college.",
+            },
+          ],
+          synonyms: ["creative expression", "craft"],
+        },
+        movie: {
+          pronunciation: "ˈmuːvi",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A story or event recorded by a camera as a set of moving images and shown in a cinema or on television; a motion picture.",
+              example: "They went to see a movie at the cinema.",
+            },
+          ],
+          synonyms: ["film", "motion picture"],
+        },
+        television: {
+          pronunciation: "ˈtɛlɪvɪʒ(ə)n",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A system for transmitting visual images and sound that are reproduced on screens, chiefly used to broadcast programs for entertainment, information, and education.",
+              example: "They watch television every evening.",
+            },
+          ],
+          synonyms: ["screen"],
+        },
+        phone: {
+          pronunciation: "fəʊn",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "A telephone.",
+              example: "She answered the phone.",
+            },
+          ],
+          synonyms: ["telephone", "cellphone"],
+        },
+        book: {
+          pronunciation: "bʊk",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A written or printed work consisting of pages glued or sewn together along one side and bound in covers.",
+              example: "She loves reading books in her free time.",
+            },
+          ],
+          synonyms: ["volume", "publication"],
+        },
+        clock: {
+          pronunciation: "klɒk",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A mechanical or electrical device for measuring time, indicating hours, minutes, and sometimes seconds by hands on a round dial or by displayed figures.",
+              example: "She glanced at the clock on the wall.",
+            },
+          ],
+          synonyms: ["timepiece", "watch"],
+        },
+        game: {
+          pronunciation: "ɡeɪm",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A form of play or sport, especially a competitive one played according to rules and decided by skill, strength, or luck.",
+              example: "They played a board game together.",
+            },
+          ],
+          synonyms: ["sport", "contest"],
+        },
+        flower: {
+          pronunciation: "ˈflaʊər",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "The seed-bearing part of a plant, consisting of reproductive organs (stamens and carpels) that are typically surrounded by a brightly colored corolla (petals) and a green calyx (sepals).",
+              example: "She picked a flower from the garden.",
+            },
+          ],
+          synonyms: ["blossom", "bloom"],
+        },
+        guitar: {
+          pronunciation: "ɡɪˈtɑː",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A stringed musical instrument with a fretted fingerboard, typically incurved sides, and six or twelve strings, played by plucking or strumming with the fingers or a plectrum.",
+              example: "He played the guitar at the party.",
+            },
+          ],
+          synonyms: ["instrument", "strings"],
+        },
+        painting: {
+          pronunciation: "ˈpeɪntɪŋ",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "The process or art of using paint, in a picture, as a protective coating, or as decoration.",
+              example: "She admired the painting on the wall.",
+            },
+          ],
+          synonyms: ["artwork", "canvas"],
+        },
+        desk: {
+          pronunciation: "dɛsk",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A piece of furniture with a flat or sloped surface and typically with drawers, at which one can read, write, or do other work.",
+              example: "He sat at his desk, working on his computer.",
+            },
+          ],
+          synonyms: ["table", "workstation"],
+        },
+        chair: {
+          pronunciation: "tʃɛər",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A separate seat for one person, typically with a back and four legs.",
+              example: "She pulled up a chair and sat down.",
+            },
+          ],
+          synonyms: ["seat", "stool"],
+        },
+        bag: {
+          pronunciation: "bæɡ",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A flexible container with an opening at the top, used for carrying things.",
+              example: "She packed her bag for the trip.",
+            },
+          ],
+          synonyms: ["sack", "pouch"],
+        },
+        hat: {
+          pronunciation: "hæt",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A shaped covering for the head, typically with a crown and brim.",
+              example: "He tipped his hat to greet her.",
+            },
+          ],
+          synonyms: ["cap", "headgear"],
+        },
+        shoe: {
+          pronunciation: "ʃuː",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A covering for the foot, typically made of leather, having a sturdy sole and not reaching above the ankle.",
+              example: "She tied her shoes before going for a run.",
+            },
+          ],
+          synonyms: ["footwear", "boot"],
+        },
+        coat: {
+          pronunciation: "kəʊt",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An outer garment with sleeves, worn outdoors and typically extending below the hips.",
+              example: "He put on his coat before going outside.",
+            },
+          ],
+          synonyms: ["jacket", "overcoat"],
+        },
+        pants: {
+          pronunciation: "pænts",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An outer garment covering the body from the waist to the ankles, with a separate part for each leg.",
+              example: "She put on her pants and headed out.",
+            },
+          ],
+          synonyms: ["trousers", "slacks"],
+        },
+        shirt: {
+          pronunciation: "ʃɜːt",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A garment for the upper body made of cotton or a similar fabric, with a collar, sleeves, and buttons down the front.",
+              example: "He ironed his shirt for the meeting.",
+            },
+          ],
+          synonyms: ["blouse", "top"],
+        },
+        dress: {
+          pronunciation: "drɛs",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A one-piece garment for a woman or girl that covers the body and extends down over the legs.",
+              example: "She wore a beautiful dress to the party.",
+            },
+          ],
+          synonyms: ["gown", "frock"],
+        },
+        socks: {
+          pronunciation: "sɒks",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A garment for the foot and lower part of the leg, typically knitted from wool, cotton, or nylon.",
+              example: "He put on his socks before slipping into his shoes.",
+            },
+          ],
+          synonyms: ["stockings", "hose"],
+        },
+        glove: {
+          pronunciation: "ɡlʌv",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A covering for the hand, typically with separate sections for each finger and the thumb.",
+              example:
+                "She put on her gloves before going outside in the cold.",
+            },
+          ],
+          synonyms: ["mitten", "handwear"],
+        },
+        belt: {
+          pronunciation: "bɛlt",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A strip of leather or other material worn, typically around the waist, to support or hold in clothes or to carry weapons.",
+              example: "He tightened his belt after a big meal.",
+            },
+          ],
+          synonyms: ["strap", "band"],
+        },
+        watch: {
+          pronunciation: "wɒtʃ",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A small timepiece worn typically on a strap on one's wrist.",
+              example: "She glanced at her watch to check the time.",
+            },
+          ],
+          synonyms: ["timepiece", "chronometer"],
+        },
+        hat: {
+          pronunciation: "hæt",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A shaped covering for the head, typically with a crown and brim.",
+              example: "He tipped his hat to greet her.",
+            },
+          ],
+          synonyms: ["cap", "headgear"],
+        },
+        bag: {
+          pronunciation: "bæɡ",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A flexible container with an opening at the top, used for carrying things.",
+              example: "She packed her bag for the trip.",
+            },
+          ],
+          synonyms: ["sack", "pouch"],
+        },
+        phone: {
+          pronunciation: "fəʊn",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "A telephone.",
+              example: "She answered the phone.",
+            },
+          ],
+          synonyms: ["telephone", "cellphone"],
+        },
+        door: {
+          pronunciation: "dɔː",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A hinged, sliding, or revolving barrier at the entrance to a building, room, or vehicle, or in the framework of a cupboard.",
+              example: "He opened the door and stepped inside.",
+            },
+          ],
+          synonyms: ["entrance", "portal"],
+        },
+        window: {
+          pronunciation: "ˈwɪndəʊ",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An opening in the wall or roof of a building or vehicle that is fitted with glass or other transparent material in a frame to admit light or air and allow people to see out.",
+              example: "She opened the window to let in some fresh air.",
+            },
+          ],
+          synonyms: ["pane", "opening"],
+        },
+        key: {
+          pronunciation: "kiː",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A small piece of shaped metal with incisions cut to fit the wards of a particular lock, and that is inserted into a lock and turned to open or close it.",
+              example: "She found her keys in her bag.",
+            },
+          ],
+          synonyms: ["lock", "combination"],
+        },
+        table: {
+          pronunciation: "ˈteɪbl",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A piece of furniture with a flat top and one or more legs, providing a level surface for eating, writing, or working.",
+              example: "They sat around the table for dinner.",
+            },
+          ],
+          synonyms: ["desk", "board"],
+        },
+        pencil: {
+          pronunciation: "ˈpɛnsəl",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An instrument for writing or drawing, consisting of a thin stick of graphite or a similar substance enclosed in a long thin piece of wood or fixed in a metal or plastic case.",
+              example: "She sharpened her pencil before starting her homework.",
+            },
+          ],
+          synonyms: ["writing implement", "lead"],
+        },
+        notebook: {
+          pronunciation: "ˈnəʊtbʊk",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A book with blank pages for recording notes or memoranda.",
+              example: "She carried a small notebook to jot down ideas.",
+            },
+          ],
+          synonyms: ["journal", "diary"],
+        },
+        bottle: {
+          pronunciation: "ˈbɒt(ə)l",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A narrow-necked container typically made of glass or plastic, used for storing drinks or other liquids.",
+              example: "She poured herself a glass from the bottle.",
+            },
+          ],
+          synonyms: ["container", "flask"],
+        },
+        plate: {
+          pronunciation: "pleɪt",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A flat dish, typically circular and made of china, from which food is eaten or served.",
+              example: "He placed the plate on the table.",
+            },
+          ],
+          synonyms: ["dish", "platter"],
+        },
+        fork: {
+          pronunciation: "fɔːk",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An implement with two or more prongs used for lifting food to the mouth or holding it when cutting.",
+              example: "She picked up her fork and began to eat.",
+            },
+          ],
+          synonyms: ["utensil", "cutlery"],
+        },
+        spoon: {
+          pronunciation: "spuːn",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An implement consisting of a small, shallow oval or round bowl on a long handle, used for eating, stirring, and serving food.",
+              example: "He stirred his tea with a spoon.",
+            },
+          ],
+          synonyms: ["utensil", "ladle"],
+        },
+        knife: {
+          pronunciation: "naɪf",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An instrument composed of a blade fixed into a handle, used for cutting or as a weapon.",
+              example: "She used a knife to slice the bread.",
+            },
+          ],
+          synonyms: ["blade", "dagger"],
+        },
+        food: {
+          pronunciation: "fuːd",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "Any nutritious substance that people or animals eat or drink or that plants absorb in order to maintain life and growth.",
+              example: "She prepared a delicious meal with fresh food.",
+            },
+          ],
+          synonyms: ["nourishment", "fare"],
+        },
+        drink: {
+          pronunciation: "drɪŋk",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A liquid that can be swallowed as refreshment or nourishment.",
+              example: "He poured himself a drink from the bottle.",
+            },
+          ],
+          synonyms: ["beverage", "liquid"],
+        },
+        water: {
+          pronunciation: "ˈwɔːtə",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A colorless, transparent, odorless liquid that forms the seas, lakes, rivers, and rain and is the basis of the fluids of living organisms.",
+              example: "She drank a glass of water.",
+            },
+          ],
+          synonyms: ["H2O", "aquae"],
+        },
+        juice: {
+          pronunciation: "dʒuːs",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "The liquid obtained from or present in fruit or vegetables.",
+              example: "She poured herself a glass of orange juice.",
+            },
+          ],
+          synonyms: ["nectar", "sap"],
+        },
+        milk: {
+          pronunciation: "mɪlk",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An opaque white fluid rich in fat and protein, secreted by female mammals for the nourishment of their young.",
+              example: "She poured milk into her cereal.",
+            },
+          ],
+          synonyms: ["dairy", "lactation"],
+        },
+        coffee: {
+          pronunciation: "ˈkɒfi",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A hot drink made from the roasted and ground seeds (coffee beans) of a tropical shrub.",
+              example: "She enjoys a cup of coffee in the morning.",
+            },
+          ],
+          synonyms: ["java", "brew"],
+        },
+        tea: {
+          pronunciation: "tiː",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A hot drink made by infusing the dried, crushed leaves of the tea plant in boiling water.",
+              example: "She sipped her tea slowly.",
+            },
+          ],
+          synonyms: ["brew", "infusion"],
+        },
+        bread: {
+          pronunciation: "brɛd",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "Food made of flour, water, and yeast or another leavening agent, mixed together and baked.",
+              example: "She toasted some bread for breakfast.",
+            },
+          ],
+          synonyms: ["loaf", "bun"],
+        },
+        cake: {
+          pronunciation: "keɪk",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An item of soft sweet food made from a mixture of flour, fat, eggs, sugar, and other ingredients, baked and sometimes iced or decorated.",
+              example: "She baked a chocolate cake for the party.",
+            },
+          ],
+          synonyms: ["pastry", "dessert"],
+        },
+        cookie: {
+          pronunciation: "ˈkʊki",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "A small sweet cake, typically round, flat, and crisp.",
+              example: "She offered him a cookie with his tea.",
+            },
+          ],
+          synonyms: ["biscuit", "snack"],
+        },
+        candy: {
+          pronunciation: "ˈkændi",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A sweet food made with sugar or syrup combined with fruit, chocolate, or nuts.",
+              example: "She enjoyed some candy as a treat.",
+            },
+          ],
+          synonyms: ["sweets", "confectionery"],
+        },
+        fruit: {
+          pronunciation: "fruːt",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "The sweet and fleshy product of a tree or other plant that contains seed and can be eaten as food.",
+              example: "She ate an apple for a snack.",
+            },
+          ],
+          synonyms: ["produce", "harvest"],
+        },
+        vegetable: {
+          pronunciation: "ˈvɛdʒtəb(ə)l",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A plant or part of a plant used as food, typically as accompaniment to meat or fish, such as a cabbage, potato, carrot, or bean.",
+              example: "She cooked some vegetables for dinner.",
+            },
+          ],
+          synonyms: ["greens", "produce"],
+        },
+        meat: {
+          pronunciation: "miːt",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "The flesh of an animal (especially a mammal) as food.",
+              example: "They grilled some meat for the barbecue.",
+            },
+          ],
+          synonyms: ["flesh", "protein"],
+        },
+        fish: {
+          pronunciation: "fɪʃ",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A limbless cold-blooded vertebrate animal with gills and fins and living wholly in water.",
+              example: "She ordered fish and chips at the restaurant.",
+            },
+          ],
+          synonyms: ["seafood", "catch"],
+        },
+        egg: {
+          pronunciation: "ɛɡ",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An oval or round object laid by a female bird, reptile, fish, or invertebrate, usually containing a developing embryo.",
+              example: "She cracked an egg into the frying pan.",
+            },
+          ],
+          synonyms: ["ovum", "spawn"],
+        },
+        cheese: {
+          pronunciation: "tʃiːz",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "A food made from the pressed curds of milk.",
+              example: "She sliced some cheese for the sandwiches.",
+            },
+          ],
+          synonyms: ["dairy", "curd"],
+        },
+        butter: {
+          pronunciation: "ˈbʌtə",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A pale yellow edible fatty substance made by churning cream and used as a spread or in cooking.",
+              example: "She spread butter on her toast.",
+            },
+          ],
+          synonyms: ["spread", "cream"],
+        },
+        sugar: {
+          pronunciation: "ˈʃʊɡə",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A sweet crystalline substance obtained from various plants, especially sugar cane and sugar beet, consisting essentially of sucrose, and used as a sweetener in food and drink.",
+              example: "She added sugar to her tea.",
+            },
+          ],
+          synonyms: ["sweetener", "sucrose"],
+        },
+        salt: {
+          pronunciation: "sɔːlt",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A white crystalline substance that gives seawater its characteristic taste and is used for seasoning or preserving food.",
+              example: "She sprinkled salt on her food.",
+            },
+          ],
+          synonyms: ["sodium chloride", "seasoning"],
+        },
+        pepper: {
+          pronunciation: "ˈpɛpə",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A pungent, hot-tasting powder prepared from dried and ground peppercorns, commonly used as a spice or condiment to flavor food.",
+              example: "She seasoned her salad with pepper.",
+            },
+          ],
+          synonyms: ["spice", "seasoning"],
+        },
+        spice: {
+          pronunciation: "spaɪs",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An aromatic or pungent vegetable substance used to flavor food, e.g., cloves, pepper, or mace.",
+              example: "She added spices to the stew for extra flavor.",
+            },
+          ],
+          synonyms: ["seasoning", "flavoring"],
+        },
+        rice: {
+          pronunciation: "raɪs",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "The starchy seeds of an annual southeast Asian cereal grass (Oryza sativa) that are cooked and used for food.",
+              example: "She served curry with rice.",
+            },
+          ],
+          synonyms: ["grain", "cereal"],
+        },
+        noodle: {
+          pronunciation: "ˈnuːdl",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A strip, ring, or tube of pasta or a similar dough, typically made with egg and usually eaten with a sauce or in a soup.",
+              example: "She cooked noodles for dinner.",
+            },
+          ],
+          synonyms: ["pasta", "spaghetti"],
+        },
+        pizza: {
+          pronunciation: "ˈpiːtsə",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A dish of Italian origin consisting of a flat, round base of dough baked with a topping of tomato sauce and cheese, typically with added meat or vegetables.",
+              example: "She ordered a pizza for dinner.",
+            },
+          ],
+          synonyms: ["pie", "slice"],
+        },
+        soup: {
+          pronunciation: "suːp",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A liquid dish, typically made by boiling meat, fish, or vegetables, etc., in stock or water.",
+              example: "She made chicken soup for her sick friend.",
+            },
+          ],
+          synonyms: ["broth", "stew"],
+        },
+        salad: {
+          pronunciation: "ˈsaləd",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A cold dish of various mixtures of raw or cooked vegetables, usually seasoned with oil, vinegar, or other dressing and sometimes accompanied by meat, fish, or other ingredients.",
+              example: "She tossed a salad for lunch.",
+            },
+          ],
+          synonyms: ["greens", "tossed salad"],
+        },
+        sandwich: {
+          pronunciation: "ˈsandwɪtʃ",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An item of food consisting of two pieces of bread with meat, cheese, or other filling between them, eaten as a light meal.",
+              example: "She packed a sandwich for her picnic.",
+            },
+          ],
+          synonyms: ["sub", "hoagie"],
+        },
+        cake: {
+          pronunciation: "keɪk",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An item of soft sweet food made from a mixture of flour, fat, eggs, sugar, and other ingredients, baked and sometimes iced or decorated.",
+              example: "She baked a chocolate cake for the party.",
+            },
+          ],
+          synonyms: ["pastry", "dessert"],
+        },
+        cookie: {
+          pronunciation: "ˈkʊki",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "A small sweet cake, typically round, flat, and crisp.",
+              example: "She offered him a cookie with his tea.",
+            },
+          ],
+          synonyms: ["biscuit", "snack"],
+        },
+        candy: {
+          pronunciation: "ˈkændi",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A sweet food made with sugar or syrup combined with fruit, chocolate, or nuts.",
+              example: "She enjoyed some candy as a treat.",
+            },
+          ],
+          synonyms: ["sweets", "confectionery"],
+        },
+        fruit: {
+          pronunciation: "fruːt",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "The sweet and fleshy product of a tree or other plant that contains seed and can be eaten as food.",
+              example: "She ate an apple for a snack.",
+            },
+          ],
+          synonyms: ["produce", "harvest"],
+        },
+        vegetable: {
+          pronunciation: "ˈvɛdʒtəb(ə)l",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A plant or part of a plant used as food, typically as accompaniment to meat or fish, such as a cabbage, potato, carrot, or bean.",
+              example: "She cooked some vegetables for dinner.",
+            },
+          ],
+          synonyms: ["greens", "produce"],
+        },
+        meat: {
+          pronunciation: "miːt",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "The flesh of an animal (especially a mammal) as food.",
+              example: "They grilled some meat for the barbecue.",
+            },
+          ],
+          synonyms: ["flesh", "protein"],
+        },
+        fish: {
+          pronunciation: "fɪʃ",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A limbless cold-blooded vertebrate animal with gills and fins and living wholly in water.",
+              example: "She ordered fish and chips at the restaurant.",
+            },
+          ],
+          synonyms: ["seafood", "catch"],
+        },
+        egg: {
+          pronunciation: "ɛɡ",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "An oval or round object laid by a female bird, reptile, fish, or invertebrate, usually containing a developing embryo.",
+              example: "She cracked an egg into the frying pan.",
+            },
+          ],
+          synonyms: ["ovum", "spawn"],
+        },
+        cheese: {
+          pronunciation: "tʃiːz",
+          type: "noun",
+          meanings: [
+            {
+              meaning: "A food made from the pressed curds of milk.",
+              example: "She sliced some cheese for the sandwiches.",
+            },
+          ],
+          synonyms: ["dairy", "curd"],
+        },
+        butter: {
+          pronunciation: "ˈbʌtə",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A pale yellow edible fatty substance made by churning cream and used as a spread or in cooking.",
+              example: "She spread butter on her toast.",
+            },
+          ],
+          synonyms: ["spread", "cream"],
+        },
+        educator: {
+          pronunciation: "ˈɛdʒʊˌkeɪtər",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A person who provides instruction or education, especially as a profession; a teacher.",
+              example: "She has been an educator for over 20 years.",
+            },
+          ],
+          synonyms: ["teacher", "instructor", "tutor", "professor"],
+        },
+        screen: {
+          pronunciation: "skriːn",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "A flat panel or area on a display device in which images or information are shown.",
+              example: "The movie was projected onto a large screen.",
+            },
+            {
+              meaning: "A physical barrier that separates or protects.",
+              example: "The window screen kept the bugs out.",
+            },
+          ],
+          synonyms: ["display", "monitor", "panel", "shield", "barrier"],
+        },
+        sprint: {
+          pronunciation: "sprɪnt",
+          type: "verb",
+          meanings: [
+            {
+              meaning: "Run at full speed over a short distance.",
+              example: "He sprinted to the finish line.",
+            },
+            {
+              meaning: "Move or do something rapidly or energetically.",
+              example: "She sprinted through her to-do list.",
+            },
+          ],
+          synonyms: ["run", "dash", "race", "bolt"],
+        },
+        advanced: {
+          pronunciation: "ədˈvænst",
+          type: "adjective",
+          meanings: [
+            {
+              meaning: "Far on or ahead in development or progress.",
+              example: "She is taking an advanced course in mathematics.",
+            },
+            {
+              meaning: "Complex or sophisticated in nature or character.",
+              example:
+                "The advanced technology allows for precise measurements.",
+            },
+          ],
+          synonyms: ["progressive", "sophisticated", "complex", "high-level"],
+        },
+        sophisticated: {
+          pronunciation: "səˈfɪstɪˌkeɪtɪd",
+          type: "adjective",
+          meanings: [
+            {
+              meaning:
+                "Having acquired worldly knowledge or refinement; cultured.",
+              example: "She admired his sophisticated taste in art.",
+            },
+            {
+              meaning:
+                "Complex or intricate, especially as a result of great depth of thought.",
+              example: "The problem required a sophisticated solution.",
+            },
+          ],
+          synonyms: ["cultured", "refined", "elegant", "complex", "intricate"],
+        },
+        complex: {
+          pronunciation: "ˈkɒm.plɛks",
+          type: "adjective",
+          meanings: [
+            {
+              meaning:
+                "Consisting of many different and connected parts; not simple; complicated.",
+              example: "The instructions were complex and difficult to follow.",
+            },
+            {
+              meaning: "Having intricate or interconnected parts; complicated.",
+              example: "She has a complex personality.",
+            },
+          ],
+          synonyms: ["complicated", "intricate", "convoluted", "multi-faceted"],
+        },
+        complicated: {
+          pronunciation: "ˈkɒmplɪkeɪtɪd",
+          type: "adjective",
+          meanings: [
+            {
+              meaning:
+                "Involving many different and confusing aspects or elements; difficult to understand.",
+              example:
+                "The instructions were so complicated that I couldn't follow them.",
+            },
+          ],
+          synonyms: ["complex", "intricate", "convoluted", "knotty"],
+        },
+        abdicate: {
+          pronunciation: "ˈæbdɪˌkeɪt",
+          type: "verb",
+          meanings: [
+            {
+              meaning:
+                "To renounce or relinquish a throne, power, responsibility, duty, or right, especially in a formal manner.",
+              example: "The king abdicated the throne in favor of his son.",
+            },
+            {
+              meaning:
+                "To fail to fulfill or undertake (a responsibility or duty).",
+              example:
+                "She abdicated her role as team leader by not showing up for meetings.",
+            },
+          ],
+          synonyms: ["resign", "renounce", "relinquish", "cede"],
+        },
+        cede: {
+          pronunciation: "siːd",
+          type: "verb",
+          meanings: [
+            {
+              meaning:
+                "To give up, surrender, or yield something, especially territory or rights.",
+              example:
+                "The country agreed to cede control of the disputed territory.",
+            },
+          ],
+          synonyms: ["surrender", "relinquish", "yield", "cede", "grant"],
+        },
+        frivolous: {
+          pronunciation: "ˈfrɪvələs",
+          type: "adjective",
+          meanings: [
+            {
+              meaning: "Not having any serious purpose or value.",
+              example: "He was criticized for his frivolous spending habits.",
+            },
+            {
+              meaning: "Behaving in a silly or lighthearted manner.",
+              example:
+                "They spent the afternoon engaging in frivolous activities.",
+            },
+          ],
+          synonyms: ["trivial", "superficial", "silly", "carefree"],
+        },
+        juxtaposition: {
+          pronunciation: "ˌdʒʌkstəpəˈzɪʃən",
+          type: "noun",
+          meanings: [
+            {
+              meaning:
+                "The fact of two things being seen or placed close together with contrasting effect.",
+              example:
+                "The juxtaposition of light and dark in the painting creates a striking visual contrast.",
+            },
+            {
+              meaning:
+                "A literary or artistic device that places two or more ideas, characters, or settings side by side for comparison or contrast.",
+              example:
+                "The novel employs juxtaposition to highlight the differences between the protagonist's past and present.",
+            },
+          ],
+          synonyms: ["contrast", "comparison", "opposition", "contrariety"],
+        },
+
+        // Add more words and definitions as needed
+      };
+
+      const searchInput = document.getElementById("searchInput");
+      const suggestionsDiv = document.getElementById("suggestions");
+      const outputDiv = document.getElementById("output");
+
+      // Function to display suggestions based on the current input
+      function showSuggestions() {
+        suggestionsDiv.innerHTML = "";
+        const inputValue = searchInput.value.trim().toLowerCase();
+        const suggestions = Object.keys(dictionary).filter((word) =>
+          word.startsWith(inputValue)
+        );
+
+        suggestions.forEach((suggestion) => {
+          const suggestionElement = document.createElement("div");
+          suggestionElement.classList.add("suggestion");
+          suggestionElement.textContent = suggestion;
+          suggestionElement.addEventListener("click", () => {
+            searchInput.value = suggestion;
+            suggestionsDiv.innerHTML = "";
+            searchDictionary();
+          });
+          suggestionsDiv.appendChild(suggestionElement);
+        });
+      }
+
+      // Function to search for a word in the dictionary
+      function searchDictionary() {
+        const searchWord = searchInput.value.trim().toLowerCase();
+        const wordData = dictionary[searchWord];
+
+        if (!searchWord) {
+          outputDiv.textContent = "Please enter a word to search.";
+          return;
+        }
+
+        if (!wordData) {
+          outputDiv.textContent = "Word not found in the dictionary.";
+          return;
+        }
+
+        const { pronunciation, type, meanings, synonyms } = wordData;
+        outputDiv.innerHTML = `
+                <div class="word-info">
+                    <div class="word-type"><strong>Type:</strong> ${type}</div>
+                    <div><strong>Pronunciation:</strong> ${pronunciation}</div>
+                    <div><strong>Meanings:</strong></div>
+                    ${meanings
+                      .map(
+                        (meaning) => `
+                        <div class="definition">
+                            <i class="fas fa-book dictionary-icon"></i>
+                            <strong>${meaning.meaning}:</strong> ${meaning.example}
+                        </div>
+                    `
+                      )
+                      .join("")}
+                    ${
+                      synonyms.length > 0
+                        ? `<div class="synonyms"><strong>Synonyms:</strong> ${synonyms
+                            .map(
+                              (synonym) =>
+                                `<span class="synonym" onclick="showSynonymDefinition('${synonym}')">${synonym}</span>`
+                            )
+                            .join(", ")}</div>`
+                        : ""
+                    }
+                </div>
+            `;
+      }
+
+      // Function to display definition of synonym
+      function showSynonymDefinition(synonym) {
+        const wordData = dictionary[synonym.toLowerCase()];
+        if (wordData) {
+          const { pronunciation, type, meanings, synonyms } = wordData;
+          outputDiv.innerHTML += `
+                    <hr>
+                    <div class="word-info">
+                        <div class="word-type"><strong>Type:</strong> ${type}</div>
+                        <div><strong>Pronunciation:</strong> ${pronunciation}</div>
+                        <div><strong>Meanings:</strong></div>
+                        ${meanings
+                          .map(
+                            (meaning) => `
+                            <div class="definition">
+                                <i class="fas fa-book dictionary-icon"></i>
+                                <strong>${meaning.meaning}:</strong> ${meaning.example}
+                            </div>
+                        `
+                          )
+                          .join("")}
+                    </div>
+                `;
+        } else {
+          outputDiv.innerHTML += `<div>Definition not found for synonym "${synonym}".</div>`;
+        }
+      }
+
+      // Event listeners
+      searchInput.addEventListener("input", () => {
+        showSuggestions();
+        searchDictionary();
+      });
+
+      // Hide suggestions when clicking outside the input
+      document.addEventListener("click", (e) => {
+        if (
+          e.target !== searchInput &&
+          e.target.parentNode !== suggestionsDiv
+        ) {
+          suggestionsDiv.innerHTML = "";
+        }
+      });
+    </script>
+  </body>
+</html>
